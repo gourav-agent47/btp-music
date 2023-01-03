@@ -12,7 +12,7 @@ pygame.display.set_caption("Interval Game!")
 POSSIBLE_NOTES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'e_h', 'f_h']
 NOTE_POSITIONS = {'e': 250, 'f': 225, 'g' : 200, 'a': 175, 'b' : 150, 'c': 125, 'd': 100, 'e_h': 75,'f_h': 50}
 
-BACKGROUND = pygame.image.load(os.path.join('Assets', 'background.jpg'))
+BACKGROUND = pygame.image.load(os.path.join('Assets', 'whiteScreen.png'))
 BACKGROUND = pygame.transform.scale(BACKGROUND, (constants.WIDTH, constants.HEIGHT))
 
 
@@ -36,6 +36,14 @@ def draw_sheet():
     pygame.draw.rect(WIN, constants.BLACK, VERTICAL1)
     pygame.draw.rect(WIN, constants.BLACK, VERTICAL2)
 
+def draw_player(image_num, pos):
+    # the pos here is the y axis coordinate of the player
+    # image_num is the index of the sprite animation image
+    player_image = constants.image_sprite[image_num]
+    player_image = pygame.transform.scale(player_image, (75, 75))
+    positions = [150, 175, 200, 225, 250, 275, 300, 325, 350]       # the y positions of my player
+    WIN.blit(player_image, (150, positions[pos]))      
+
 
 def draw_notes(notes):   # takes in a list of positions
     QUARTERNOTE_IMAGE = pygame.image.load(os.path.join('Assets', 'Notes', 'QuarterNote.png'))
@@ -47,13 +55,13 @@ def draw_notes(notes):   # takes in a list of positions
     
     # for note in notes:
     #     WIN.blit(QUARTERNOTE, (pos[0], pos[1])) 
-    WIN.blit(QUARTERNOTE, (150, NOTE_POSITIONS[notes[0]]))
-    WIN.blit(QUARTERNOTE, (250, NOTE_POSITIONS[notes[1]]))
-    WIN.blit(QUARTERNOTE, (350, NOTE_POSITIONS[notes[2]]))
-    WIN.blit(QUARTERNOTE, (450, NOTE_POSITIONS[notes[3]]))
+    WIN.blit(QUARTERNOTE, (260, NOTE_POSITIONS[notes[0]]))
+    WIN.blit(QUARTERNOTE, (420, NOTE_POSITIONS[notes[1]]))
+    WIN.blit(QUARTERNOTE, (580, NOTE_POSITIONS[notes[2]]))
+    WIN.blit(QUARTERNOTE, (740, NOTE_POSITIONS[notes[3]]))
 
 def draw_winner():
-    draw_text = constants.WINNER_FONT.render('Level Passed!', 1, constants.WHITE)
+    draw_text = constants.WINNER_FONT.render('Level Passed!', 1, constants.RED)
     WIN.blit(draw_text, ((constants.WIDTH/2 - draw_text.get_width()/2), constants.HEIGHT/2 - draw_text.get_height()/2))
     pygame.display.update()
     pygame.time.delay(1000)   
@@ -64,13 +72,15 @@ def draw_endgame():
     pygame.display.update()
     pygame.time.delay(5000)   
 
-def draw_window(position, val):
+def draw_window(position, image_num, y_player_pos):
     # pygame.draw.rect(WIN, constants.WHITE, background)
+    # player_image = constants.image_sprite[image_num]
+    # player_image = pygame.transform.scale(player_image, (100, 100))
+    
     WIN.blit(BACKGROUND, (0, 0))
-    image = constants.image_sprite[val]
-    WIN.blit(image, (150, 150))
     draw_sheet()
     draw_notes(position)
+    draw_player(image_num, y_player_pos)
     pygame.display.update()
 
 def main():
@@ -79,6 +89,8 @@ def main():
     run = True
     pointer = 0
     life = 3
+    curr_key = ''
+    y_player_pos = 0
     # success = False
 
     sequence = []
@@ -86,10 +98,10 @@ def main():
     for i in range(4):
         notes.append(random.choice(POSSIBLE_NOTES))
 
-    val = 0 # for printing the sprite character
+    image_num = 0 # for printing the sprite character
 
-    draw_window(notes, val)
-    print(notes)
+    draw_window(notes, image_num, y_player_pos)
+    # print(notes)
 
     while run:
         clock.tick(constants.FPS)
@@ -98,51 +110,82 @@ def main():
                 run = False
 
             if event.type == pygame.KEYDOWN:
-
-                if event.key == pygame.K_d and notes[pointer] == 'e':
-                        sequence.append('e')
-                        pointer += 1
+                if event.key == pygame.K_d:
+                        curr_key = 'e'
+                        if notes[pointer] == 'e':
+                            sequence.append('e')
+                            pointer += 1
+                        
                 
-                elif event.key == pygame.K_f and notes[pointer] == 'f':
-                        sequence.append('f')
-                        pointer += 1
+                elif event.key == pygame.K_f:
+                        curr_key = 'f'
+                        if  notes[pointer] == 'f':
+                            sequence.append('f')
+                            pointer += 1
+                        
                     
-                elif event.key == pygame.K_g and notes[pointer] == 'g':
-                        sequence.append('g')
-                        pointer += 1
+                elif event.key == pygame.K_g  :
+                        curr_key = 'g'
+                        if notes[pointer] == 'g':
+                            sequence.append('g')
+                            pointer += 1
+                        
 
-                elif event.key == pygame.K_h and notes[pointer] == 'a':
-                        sequence.append('a')
-                        pointer += 1
+                elif event.key == pygame.K_h  :
+                        curr_key = 'a'
+                        if notes[pointer] == 'a':
+                            sequence.append('a')
+                            pointer += 1
+                        
 
-                elif event.key == pygame.K_j and notes[pointer] == 'b':
-                        sequence.append('b')
-                        pointer += 1
+                elif event.key == pygame.K_j  :
+                        curr_key = 'b'
+                        if notes[pointer] == 'b':
+                            sequence.append('b')
+                            pointer += 1
+                        
 
-                elif event.key == pygame.K_k and notes[pointer] == 'c':
-                        sequence.append('c')
-                        pointer += 1
+                elif event.key == pygame.K_k:
+                        curr_key = 'c'
+                        if notes[pointer] == 'c':
+                            sequence.append('c')
+                            pointer += 1
+                        
 
-                elif event.key == pygame.K_l and notes[pointer] == 'd':
-                        sequence.append('d')
-                        pointer += 1
+                elif event.key == pygame.K_l  :
+                        curr_key = 'd'
+                        if notes[pointer] == 'd':
+                            pointer += 1
+                            sequence.append('d')
 
-                elif event.key == pygame.K_SEMICOLON and notes[pointer] == 'e_h':
-                        sequence.append('e_h')
-                        pointer += 1
+                elif event.key == pygame.K_SEMICOLON:
+                        curr_key = 'e_h'
+                        if notes[pointer] == 'e_h':
+                            sequence.append('e_h')
+                            pointer += 1
+                        
 
-                elif event.key == pygame.K_QUOTE and notes[pointer] == 'f_h':
-                        sequence.append('f_h')
-                        pointer += 1
+                elif event.key == pygame.K_QUOTE:
+                        curr_key = 'f_h'
+                        if notes[pointer] == 'f_h':
+                            pointer += 1
+                            sequence.append('f_h')
                 else:
                     life -= 1
 
-        # val = random.randint(0,9)
-        if val == 10:
-            val = 0
+        # print(f'curr_key is {curr_key}')
+        # print(f'notes are {notes}')
+        # print(f'sequence is {sequence}')
+        if image_num == 4:  # hard coded the 4 here
+            image_num = 0
 
-        draw_window(notes, val)     # val is for printing the sprite image
-        val += 1
+        if curr_key == '':
+            y_player_pos = 0
+        else:
+            y_player_pos = constants.player_positions[curr_key]
+
+        draw_window(notes, image_num, y_player_pos)     # image_num is for printing the sprite image
+        image_num += 1
         
         pygame.display.update()
 
@@ -154,8 +197,8 @@ def main():
             #     yellow_health -= 1
             #     BULLET_HIT_SOUND.play()
         
-        print('sequence is', sequence)
-        print('notes are', notes)
+        # print('sequence is', sequence)
+        # print('notes are', notes)
 
         # if life == 0:
         #     draw_endgame()
@@ -174,7 +217,7 @@ def main():
             for i in range(4):
                 notes.append(random.choice(POSSIBLE_NOTES))
 
-            draw_window(notes)
+            draw_window(notes, 0, y_player_pos)
             # run = False
 
         
